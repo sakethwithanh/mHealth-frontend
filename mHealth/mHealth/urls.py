@@ -22,7 +22,11 @@ urlpatterns = [
     path('signup/',views.SignupPage,name='signup'),
     path('', views.LoginPage, name='login'),
     path('home/', views.HomePage, name='home'),
+     path('sheet/', views.SheetPage, name='sheet'),
     path('logout/', views.LogoutPage, name='logout'),
-    
+    path('download-csv/', views.download_csv_data, name='download_csv_data'),
+    path('generate_hl7/', views.generate_hl7, name='generate_hl7'),
+     path('download_hl7/', views.download_hl7, name='download_hl7'),
+     
 
 ]

@@ -1,8 +1,114 @@
-from django.shortcuts import render
+
 from django.contrib.auth.models import User
 from django.core.validators import EmailValidator, ValidationError
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate,login,logout
+from django.http import HttpResponse
+import csv
+from django.http import HttpResponse
+
+def generate_hl7(request):
+    # Path to your CSV file
+    csv_file_path = 'C:\\Users\\ragir\\Downloads\\IP_ Sujay Deb - AHLSAM018434.csv'
+
+    # Read data from CSV file
+    with open(csv_file_path, 'r') as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+        dataset = list(csv_reader)
+
+    # Create an HL7 message template (MSH segment)
+    hl7_message = (
+        "MSH|^~\\&|YourApp|YourFacility|HL7Server|HL7Server|20230908170000||ORU^R01|123456|P|2.5|||\n"
+    )
+
+    # Iterate through the dataset and create an HL7 message for each record
+    for record in dataset:
+        # Create a new HL7 message for each record
+        hl7_message += f"PID|1||{record['Time']}||{record['Sleep']}|||\n"
+
+        # OBX segment for GSR
+        obx_gsr = (
+            f"OBX|1|NM|GSR^Galvanic Skin Response^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['GSR']}\n"
+        )
+        hl7_message += obx_gsr
+
+        # OBX segment for CBT
+        obx_cbt = (
+            f"OBX|2|NM|CBT^Core Body Temperature^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['CBT(degC)']}\n"
+        )
+        hl7_message += obx_cbt
+
+        # OBX segment for PPG
+        obx_ppg = (
+            f"OBX|3|NM|PPG^Photoplethysmogram^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['PPG']}\n"
+        )
+        hl7_message += obx_ppg
+
+        # OBX segment for ECG
+        obx_ecg = (
+            f"OBX|4|NM|ECG^Electrocardiogram^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['ECG']}\n"
+        )
+        hl7_message += obx_ecg
+
+    # Set the proper content type for plain text
+    response = HttpResponse(hl7_message, content_type='text/plain')
+    
+    # Set the Content-Disposition header to inline
+    response['Content-Disposition'] = 'inline; filename="hl7_messages.hl7"'
+    
+
+    return response
+def download_hl7(request):
+    # Path to your CSV file
+    csv_file_path = 'D:\\downloads\\IP_ Sujay Deb - AHLSAM018434 .csv'
+
+    # Read data from CSV file
+    with open(csv_file_path, 'r') as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+        dataset = list(csv_reader)
+
+    # Create an HL7 message template (MSH segment)
+    hl7_message = (
+        "MSH|^~\\&|YourApp|YourFacility|HL7Server|HL7Server|20230908170000||ORU^R01|123456|P|2.5|||\n"
+    )
+
+    # Iterate through the dataset and create an HL7 message for each record
+    for record in dataset:
+        # Create a new HL7 message for each record
+        hl7_message += f"PID|1||{record['Time']}||{record['Sleep']}|||\n"
+
+        # OBX segment for GSR
+        obx_gsr = (
+            f"OBX|1|NM|GSR^Galvanic Skin Response^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['GSR']}\n"
+        )
+        hl7_message += obx_gsr
+
+        # OBX segment for CBT
+        obx_cbt = (
+            f"OBX|2|NM|CBT^Core Body Temperature^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['CBT(degC)']}\n"
+        )
+        hl7_message += obx_cbt
+
+        # OBX segment for PPG
+        obx_ppg = (
+            f"OBX|3|NM|PPG^Photoplethysmogram^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['PPG']}\n"
+        )
+        hl7_message += obx_ppg
+
+        # OBX segment for ECG
+        obx_ecg = (
+            f"OBX|4|NM|ECG^Electrocardiogram^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['ECG']}\n"
+        )
+        hl7_message += obx_ecg
+
+    # Set the proper content type for plain text
+    response = HttpResponse(hl7_message, content_type='text/plain')
+    
+    # Set the Content-Disposition header to trigger download
+    response['Content-Disposition'] = 'attachment; filename="hl7_messages.hl7"'
+
+    return response
+
 def HomePage(request):
     return render(request,'home.html')
 def SignupPage(request):
@@ -62,3 +168,30 @@ def LoginPage(request):
 def LogoutPage(request):
     logout(request)
     return redirect('login')
+
+
+
+def SheetPage(request):
+    return render(request, 'sheets.html')
+
+# views.py
+
+def download_csv_data(request):
+    # Replace this with your logic to fetch data from the Google Sheet
+    # For example, you can use gspread library or any other method to get the data
+    sheet_data = [
+        ["Header1", "Header2", "Header3"],
+        ["Data1", "Data2", "Data3"],
+        # Add more rows as needed
+    ]
+
+    # Create a CSV response
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="google_sheet_data.csv"'
+
+    # Create a CSV writer and write the data to the response
+    csv_writer = csv.writer(response)
+    for row in sheet_data:
+        csv_writer.writerow(row)
+
+    return response

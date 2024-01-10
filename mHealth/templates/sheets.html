@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Google Sheet</title>
+</head>
+<body>
+
+    <h1>Embedded Google Sheet</h1>
+
+    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTY9NIuZfGWptnHuR5kOZd_zlUP1jA6s2Y3YEF11U5E-dok2ewPdhgS6h3X-5nRKOjRUYQsF53J6dOD/pubhtml?widget=true&amp;headers=false" width="100%" height="600" frameborder="0" style="border: 1px solid #ccc;"></iframe>
+
+
+
+    <!-- Link to generate and display the HL7 message -->
+    <a href="{% url 'generate_hl7' %}" class="btn btn-secondary">Generate HL7</a>
+    <a href="{% url 'download_hl7' %}" class="btn btn-primary">Download HL7</a>
+    
+
+
+</body>
+</html>
