@@ -6,108 +6,126 @@ from django.contrib.auth import authenticate,login,logout
 from django.http import HttpResponse
 import csv
 from django.http import HttpResponse
-
+import io
+import requests
 def generate_hl7(request):
-    # Path to your CSV file
-    csv_file_path = 'C:\\Users\\ragir\\Downloads\\IP_ Sujay Deb - AHLSAM018434.csv'
+    # URL of the file in the GitHub repository
+    file_url = 'https://raw.githubusercontent.com/sakethwithanh/mHealth-frontend/main/AHLSAM018434.csv'
 
-    # Read data from CSV file
-    with open(csv_file_path, 'r') as csv_file:
-        csv_reader = csv.DictReader(csv_file)
+    try:
+        # Download the file and save it as a string
+        csv_file_content = requests.get(file_url).text
+
+        # Read data from CSV content directly
+        csv_reader = csv.DictReader(csv_file_content.splitlines())
         dataset = list(csv_reader)
 
-    # Create an HL7 message template (MSH segment)
-    hl7_message = (
-        "MSH|^~\\&|YourApp|YourFacility|HL7Server|HL7Server|20230908170000||ORU^R01|123456|P|2.5|||\n"
-    )
-
-    # Iterate through the dataset and create an HL7 message for each record
-    for record in dataset:
-        # Create a new HL7 message for each record
-        hl7_message += f"PID|1||{record['Time']}||{record['Sleep']}|||\n"
-
-        # OBX segment for GSR
-        obx_gsr = (
-            f"OBX|1|NM|GSR^Galvanic Skin Response^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['GSR']}\n"
+        # Create an HL7 message template (MSH segment)
+        hl7_message = (
+            "MSH|^~\\&|YourApp|YourFacility|HL7Server|HL7Server|20230908170000||ORU^R01|123456|P|2.5|||\n"
         )
-        hl7_message += obx_gsr
 
-        # OBX segment for CBT
-        obx_cbt = (
-            f"OBX|2|NM|CBT^Core Body Temperature^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['CBT(degC)']}\n"
-        )
-        hl7_message += obx_cbt
+        # Iterate through the dataset and create an HL7 message for each record
+        for record in dataset:
+            # Create a new HL7 message for each record
+            hl7_message += f"PID|1||{record['Time']}||{record['Sleep']}|||\n"
 
-        # OBX segment for PPG
-        obx_ppg = (
-            f"OBX|3|NM|PPG^Photoplethysmogram^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['PPG']}\n"
-        )
-        hl7_message += obx_ppg
+            # OBX segment for GSR
+            obx_gsr = (
+                f"OBX|1|NM|GSR^Galvanic Skin Response^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['GSR']}\n"
+            )
+            hl7_message += obx_gsr
 
-        # OBX segment for ECG
-        obx_ecg = (
-            f"OBX|4|NM|ECG^Electrocardiogram^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['ECG']}\n"
-        )
-        hl7_message += obx_ecg
+            # OBX segment for CBT
+            obx_cbt = (
+                f"OBX|2|NM|CBT^Core Body Temperature^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['CBT(degC)']}\n"
+            )
+            hl7_message += obx_cbt
 
-    # Set the proper content type for plain text
-    response = HttpResponse(hl7_message, content_type='text/plain')
-    
-    # Set the Content-Disposition header to inline
-    response['Content-Disposition'] = 'inline; filename="hl7_messages.hl7"'
-    
+            # OBX segment for PPG
+            obx_ppg = (
+                f"OBX|3|NM|PPG^Photoplethysmogram^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['PPG']}\n"
+            )
+            hl7_message += obx_ppg
 
-    return response
+            # OBX segment for ECG
+            obx_ecg = (
+                f"OBX|4|NM|ECG^Electrocardiogram^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['ECG']}\n"
+            )
+            hl7_message += obx_ecg
+
+        # Set the proper content type for plain text
+        response = HttpResponse(hl7_message, content_type='text/plain')
+        
+        # Set the Content-Disposition header to inline
+        response['Content-Disposition'] = 'inline; filename="hl7_messages.hl7"'
+        
+        return response
+
+    except requests.exceptions.RequestException as e:
+        # Handle the exception (print/log the error, return an appropriate response, etc.)
+        print(f"Error fetching data from GitHub: {e}")
+        return HttpResponse("Internal Server Error", status=500)
+
 def download_hl7(request):
-    # Path to your CSV file
-    csv_file_path = 'D:\\downloads\\IP_ Sujay Deb - AHLSAM018434 .csv'
+    # URL of the file in the GitHub repository
+    file_url = 'https://raw.githubusercontent.com/sakethwithanh/mHealth-frontend/main/AHLSAM018434.csv'
 
-    # Read data from CSV file
-    with open(csv_file_path, 'r') as csv_file:
-        csv_reader = csv.DictReader(csv_file)
+    try:
+        # Download the file and save it as a string
+        csv_file_content = requests.get(file_url).text
+
+        # Read data from CSV content directly
+        csv_reader = csv.DictReader(csv_file_content.splitlines())
         dataset = list(csv_reader)
 
-    # Create an HL7 message template (MSH segment)
-    hl7_message = (
-        "MSH|^~\\&|YourApp|YourFacility|HL7Server|HL7Server|20230908170000||ORU^R01|123456|P|2.5|||\n"
-    )
-
-    # Iterate through the dataset and create an HL7 message for each record
-    for record in dataset:
-        # Create a new HL7 message for each record
-        hl7_message += f"PID|1||{record['Time']}||{record['Sleep']}|||\n"
-
-        # OBX segment for GSR
-        obx_gsr = (
-            f"OBX|1|NM|GSR^Galvanic Skin Response^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['GSR']}\n"
+        # Create an HL7 message template (MSH segment)
+        hl7_message = (
+            "MSH|^~\\&|YourApp|YourFacility|HL7Server|HL7Server|20230908170000||ORU^R01|123456|P|2.5|||\n"
         )
-        hl7_message += obx_gsr
 
-        # OBX segment for CBT
-        obx_cbt = (
-            f"OBX|2|NM|CBT^Core Body Temperature^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['CBT(degC)']}\n"
-        )
-        hl7_message += obx_cbt
+        # Iterate through the dataset and create an HL7 message for each record
+        for record in dataset:
+            # Create a new HL7 message for each record
+            hl7_message += f"PID|1||{record['Time']}||{record['Sleep']}|||\n"
 
-        # OBX segment for PPG
-        obx_ppg = (
-            f"OBX|3|NM|PPG^Photoplethysmogram^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['PPG']}\n"
-        )
-        hl7_message += obx_ppg
+            # OBX segment for GSR
+            obx_gsr = (
+                f"OBX|1|NM|GSR^Galvanic Skin Response^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['GSR']}\n"
+            )
+            hl7_message += obx_gsr
 
-        # OBX segment for ECG
-        obx_ecg = (
-            f"OBX|4|NM|ECG^Electrocardiogram^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['ECG']}\n"
-        )
-        hl7_message += obx_ecg
+            # OBX segment for CBT
+            obx_cbt = (
+                f"OBX|2|NM|CBT^Core Body Temperature^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['CBT(degC)']}\n"
+            )
+            hl7_message += obx_cbt
 
-    # Set the proper content type for plain text
-    response = HttpResponse(hl7_message, content_type='text/plain')
-    
-    # Set the Content-Disposition header to trigger download
-    response['Content-Disposition'] = 'attachment; filename="hl7_messages.hl7"'
+            # OBX segment for PPG
+            obx_ppg = (
+                f"OBX|3|NM|PPG^Photoplethysmogram^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['PPG']}\n"
+            )
+            hl7_message += obx_ppg
 
-    return response
+            # OBX segment for ECG
+            obx_ecg = (
+                f"OBX|4|NM|ECG^Electrocardiogram^HL7|||{record['Time']}|||||AmplitudeData^{record['Time']}^Units|{record['ECG']}\n"
+            )
+            hl7_message += obx_ecg
+
+        # Set the proper content type for plain text
+        response = HttpResponse(hl7_message, content_type='text/plain')
+        
+        # Set the Content-Disposition header to trigger download
+        response['Content-Disposition'] = 'attachment; filename="hl7_messages.hl7"'
+        
+        return response
+
+    except requests.exceptions.RequestException as e:
+        # Handle the exception (print/log the error, return an appropriate response, etc.)
+        print(f"Error fetching data from GitHub: {e}")
+        return HttpResponse("Internal Server Error", status=500)
+
 
 def HomePage(request):
     return render(request,'home.html')

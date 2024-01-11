@@ -4,20 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Embedded Google Sheet</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #e6f7ff; /* Updated background color */
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .iframe-container {
+            margin-bottom: 20px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+        }
+
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 5px;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+    </style>
 </head>
 <body>
 
-    <h1>Embedded Google Sheet</h1>
+    <h1>Patient's ECG and PPG data</h1>
 
-    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTY9NIuZfGWptnHuR5kOZd_zlUP1jA6s2Y3YEF11U5E-dok2ewPdhgS6h3X-5nRKOjRUYQsF53J6dOD/pubhtml?widget=true&amp;headers=false" width="100%" height="600" frameborder="0" style="border: 1px solid #ccc;"></iframe>
-
-
+    <div class="iframe-container">
+        <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTY9NIuZfGWptnHuR5kOZd_zlUP1jA6s2Y3YEF11U5E-dok2ewPdhgS6h3X-5nRKOjRUYQsF53J6dOD/pubhtml?widget=true&amp;headers=false" frameborder="0"></iframe>
+    </div>
 
     <!-- Link to generate and display the HL7 message -->
-    <a href="{% url 'generate_hl7' %}" class="btn btn-secondary">Generate HL7</a>
-    <a href="{% url 'download_hl7' %}" class="btn btn-primary">Download HL7</a>
-    
-
+    <div class="btn-container">
+        <a href="{% url 'generate_hl7' %}" class="btn btn-primary">Generate HL7</a>
+        <a href="{% url 'download_hl7' %}" class="btn btn-primary">Download HL7</a>
+    </div>
 
 </body>
 </html>
